@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const Decimal = require("decimal.js");
 
 // 价格统计数据
-let mexCache = {
+let mexcCache = {
   askPrice: null,
   bidPrice: null,
   askVol: null,
@@ -42,21 +42,21 @@ function updatePriceStats() {
   const totalFeeRate = hotcoinFeeRate + mexcFeeRate;
   // Mexc做多 Hotcoin做空
   if (
-    mexCache.askPrice &&
+    mexcCache.askPrice &&
     hotCache.bidPrice &&
-    mexCache.askPrice < hotCache.bidPrice
+    mexcCache.askPrice < hotCache.bidPrice
   ) {
-    const spread = new Decimal(mexCache.askPrice)
+    const spread = new Decimal(mexcCache.askPrice)
       .minus(hotCache.bidPrice)
       .abs();
     // 分母统一用买入价（Mexc askPrice）
-    const diffRatio = spread.div(mexCache.askPrice).mul(100);
+    const diffRatio = spread.div(mexcCache.askPrice).mul(100);
     const feePercent = totalFeeRate * 100;
     const netProfitRatio = diffRatio.minus(feePercent);
     if (diffRatio.gt(0.1)) {
-      const minQty = Decimal.min(mexCache.askVol, hotCache.bidVol);
-      const profit = minQty.mul(mexCache.askPrice).mul(netProfitRatio).div(100);
-      const mexcQty = mexCache.askVol;
+      const minQty = Decimal.min(mexcCache.askVol, hotCache.bidVol);
+      const profit = minQty.mul(mexcCache.askPrice).mul(netProfitRatio).div(100);
+      const mexcQty = mexcCache.askVol;
       const hotcoinQty = hotCache.bidVol;
       const morePlatform = mexcQty.gt(hotcoinQty) ? 'Mexc' : (mexcQty.lt(hotcoinQty) ? 'Hotcoin' : '相等');
       console.log("\n出现下单机会: Mexc做多 Hotcoin做空");
@@ -107,11 +107,11 @@ function updatePriceStats() {
   }
   // Mexc做空 Hotcoin做多
   if (
-    mexCache.bidPrice &&
+    mexcCache.bidPrice &&
     hotCache.askPrice &&
-    mexCache.bidPrice > hotCache.askPrice
+    mexcCache.bidPrice > hotCache.askPrice
   ) {
-    const spread = new Decimal(mexCache.bidPrice)
+    const spread = new Decimal(mexcCache.bidPrice)
       .minus(hotCache.askPrice)
       .abs();
     // 分母统一用买入价（Hotcoin askPrice）
@@ -119,9 +119,9 @@ function updatePriceStats() {
     const feePercent = totalFeeRate * 100;
     const netProfitRatio = diffRatio.minus(feePercent);
     if (diffRatio.gt(0.1)) {
-      const minQty = Decimal.min(mexCache.bidVol, hotCache.askVol);
+      const minQty = Decimal.min(mexcCache.bidVol, hotCache.askVol);
       const profit = minQty.mul(hotCache.askPrice).mul(netProfitRatio).div(100);
-      const mexcQty = mexCache.bidVol;
+      const mexcQty = mexcCache.bidVol;
       const hotcoinQty = hotCache.askVol;
       const morePlatform = mexcQty.gt(hotcoinQty) ? 'Mexc' : (mexcQty.lt(hotcoinQty) ? 'Hotcoin' : '相等');
       console.log("\n出现下单机会: Mexc做空 Hotcoin做多");
@@ -207,16 +207,16 @@ function createMexcWS() {
         const asks = message.data.asks;
         const bids = message.data.bids;
         if (asks.length) {
-          mexCache.askPrice = new Decimal(asks[0][0]);
-          mexCache.askVol = new Decimal(asks[0][1] * 0.001);
-          updateHistory(priceHistory.mexcAsk, mexCache.askPrice);
+          mexcCache.askPrice = new Decimal(asks[0][0]);
+          mexcCache.askVol = new Decimal(asks[0][1] * 0.001);
+          updateHistory(priceHistory.mexcAsk, mexcCache.askPrice);
         }
         if (bids.length) {
-          mexCache.bidPrice = new Decimal(bids[0][0]);
-          mexCache.bidVol = new Decimal(bids[0][1] * 0.001);
-          updateHistory(priceHistory.mexcBid, mexCache.bidPrice);
+          mexcCache.bidPrice = new Decimal(bids[0][0]);
+          mexcCache.bidVol = new Decimal(bids[0][1] * 0.001);
+          updateHistory(priceHistory.mexcBid, mexcCache.bidPrice);
         }
-        mexCache.lastUpdateTime = new Date().getTime();
+        mexcCache.lastUpdateTime = new Date().getTime();
         updatePriceStats();
       }
     } catch (error) {
