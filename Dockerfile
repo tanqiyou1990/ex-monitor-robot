@@ -30,5 +30,8 @@ ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "console.log('Health check passed')" || exit 1
 
+# 默认启动脚本为 bitmart_hotcoin_ws.js，可通过环境变量指定
+ENV MONITOR_SCRIPT=bitmart_hotcoin_ws.js
+
 # 启动项目
-CMD ["npm", "start"]
+CMD ["sh", "-c", "node src/$MONITOR_SCRIPT"]
