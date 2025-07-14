@@ -1,0 +1,27 @@
+{
+  "name": "ba_ok",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "start:bitmart-hotcoin": "node src/index.js bitmart-hotcoin",
+    "start:mexc-hotcoin": "node src/index.js mexc-hotcoin",
+    "start:bitmart-mexc": "node src/index.js bitmart-mexc",
+    "test:mexc": "node test/pw_mexc.js",
+    "test:mexc:smart": "node test/pw_mexc_smart.js",
+    "test:mexc:trading": "node test/pw_mexc_trading.js",
+    "test:mexc:stable": "node test/pw_mexc_stable.js",
+    "test:login": "node test/test_login_detection.js",
+    "debug:login": "node test/debug_login.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "decimal.js": "^10.5.0",
+    "ws": "^8.18.0",
+    "playwright": "^1.48.0"
+  }
+}
